@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: product-service
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: Micro
+    password: system
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+
+
+
+
+server:
+  port: 1111
+

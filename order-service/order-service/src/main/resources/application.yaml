@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: order_user
+    password: order123
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 9002
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9000/eureka/
+
+resilience4j:
+  circuitbreaker:
+    # INDENTATION FIXED: These must be children of 'circuitbreaker'
+    circuitBreakerAspectOrder: 1
+    instances:
+      inventory-service:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        slidingWindowSize: 5
+        ignoreExceptions: com.example.order_service.exception.ProductNotFoundException
+        permittedNumberOfCallsInHalfOpenState: 3
+
+  retry:
+    # INDENTATION FIXED: These must be children of 'retry'
+    retryAspectOrder: 2
+    instances:
+      inventory-service:
+        maxRetryAttempts: 3
+        waitDuration: 2s
+        enableExponentialBackoff: true
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.HttpServerErrorException
+          - java.lang.IllegalStateException
+        ignoreExceptions:
+          - com.example.order_service.exception.ProductNotFoundException
+          - org.springframework.web.client.HttpClientErrorException
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, circuitbreakers
+  health:
+    circuitbreakers:
+      enabled: true
