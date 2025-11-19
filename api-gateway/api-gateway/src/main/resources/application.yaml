@@ -30,3 +30,8 @@ management:
   endpoint:
     gateway:
       enabled: true
+
+application:
+  security:
+    jwt:
+      secret-key: U29tZVRoaW5nTW9yZU9yaWdpbmFsQW5kQ29tcGxleFRoYW5UaGVQcmV2aW91c09uZSE=
