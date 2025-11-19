@@ -10,8 +10,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class AuthenticationFilter implements GlobalFilter, Ordered {
+
+    private static final List<String> EXCLUDED_ENDPOINTS=List.of(
+            "/auth/login",
+            "/auth/create"
+    );
 
     // Using final and constructor injection is excellent practice
     private final JwtUtil jwtUtil;
@@ -23,6 +30,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        String path=exchange.getRequest().getPath().toString();
+        if(EXCLUDED_ENDPOINTS.contains(path)){
+            System.out.println("Gateway Filter: Skipping security for public path: " + path);
+            return chain.filter(exchange);
+        }
 
         // 1. Check if the header exists using the safe constant
         if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {

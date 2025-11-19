@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: auth_user
+    password: auth123
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+application:
+  security:
+    jwt:
+      secret-key: YWZ0ZXJub29uc2F5ZnJlZWRvbWJpcnRodG9uZ3VlZ292ZXJubWVudHNtb290aHBsZW4=
+      expirationMs: 600000
+
+server:
+  port: 9004
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9000/eureka/
+
+
+

@@ -7,6 +7,11 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/login/**
+            - Method=POST
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
@@ -34,4 +39,14 @@ management:
 application:
   security:
     jwt:
-      secret-key: U29tZVRoaW5nTW9yZU9yaWdpbmFsQW5kQ29tcGxleFRoYW5UaGVQcmV2aW91c09uZSE=
+      secret-key: YWZ0ZXJub29uc2F5ZnJlZWRvbWJpcnRodG9uZ3VlZ292ZXJubWVudHNtb290aHBsZW4=
+
+
+logging:
+  level:
+    # Set the main gateway component to TRACE level
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+    # Also useful: reactor.netty.http.client: DEBUG (to check actual connections)
