@@ -21,4 +21,9 @@ eureka:
     service-url:
       defaultZone: http://localhost:9000/eureka/
 
+application:
+  security:
+    jwt:
+      secret-key: YWZ0ZXJub29uc2F5ZnJlZWRvbWJpcnRodG9uZ3VlZ292ZXJubWVudHNtb290aHBsZW4=
+
 
