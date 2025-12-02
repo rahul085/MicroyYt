@@ -14,14 +14,11 @@ import java.io.IOException;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request)  {
-
         System.out.println("Inside handleProductNotFound()...");
-
         ErrorResponseDto dto = new ErrorResponseDto();
         dto.setApiPath(request.getRequestURI());
         dto.setErrorCode(HttpStatus.NOT_FOUND.value());
         dto.setErrorMessage(ex.getMessage());
         return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
-
     }
 }

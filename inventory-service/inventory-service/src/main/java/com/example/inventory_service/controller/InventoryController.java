@@ -16,7 +16,9 @@ public class InventoryController {
     }
 
     @GetMapping("/{productId}")
-    public boolean checkStock(@PathVariable String productId){
+    public Boolean checkStock(@PathVariable String productId){
+        Boolean productInStock = inventoryService.isProductInStock(productId);
+        System.out.println(productInStock);
         return inventoryService.isProductInStock(productId);
     }
 }

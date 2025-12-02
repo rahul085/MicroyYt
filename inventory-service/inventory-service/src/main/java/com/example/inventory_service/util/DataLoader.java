@@ -15,6 +15,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // if the inventory table has no rows , insert the dummy data....
         if(inventoryRepository.count() == 0){
             inventoryRepository.save(new InventoryEntity(null,"PROD-001",100));
             inventoryRepository.save(new InventoryEntity(null,"PROD-002",0));

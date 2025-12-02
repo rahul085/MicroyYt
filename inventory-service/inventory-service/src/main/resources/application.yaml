@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:XE
-    username: inventory_user
-    password: inventory123
+    username: auth_user
+    password: auth123
     driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
@@ -25,5 +25,6 @@ application:
   security:
     jwt:
       secret-key: YWZ0ZXJub29uc2F5ZnJlZWRvbWJpcnRodG9uZ3VlZ292ZXJubWVudHNtb290aHBsZW4=
+      expirationMs: 600000
 
 

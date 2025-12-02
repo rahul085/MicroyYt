@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @Table(name = "ORDERS")
 public class OrderEntity {
     @Id
-    @SequenceGenerator(name = "OrdSeq",allocationSize = 1,initialValue = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "OrdSeq")
+    @SequenceGenerator(name = "OrdSeq", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrdSeq")
     private Long id;
     private String productId;
     private Integer quantity;

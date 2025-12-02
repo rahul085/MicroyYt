@@ -14,10 +14,14 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
 
-    public boolean isProductInStock(String productId){
+
+
+    public Boolean isProductInStock(String productId){
         log.info("Inside isProductInStock() method of InventoryService.......");
         InventoryEntity inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(()-> new ProductNotFoundException("Product with id: "+productId+" not found"));
+        log.info("Inventory {}",inventory);
         return inventory.getAvailableQuantity()>0;
     }
+
 }

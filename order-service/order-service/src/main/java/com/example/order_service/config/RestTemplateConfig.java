@@ -1,7 +1,6 @@
 package com.example.order_service.config;
 
-import com.example.order_service.util.RequestResponseLoggingInterceptor;
-import com.example.order_service.util.RestTemplateHeaderModifierInterceptor;
+import com.example.order_service.security.CustomInterceptor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -15,14 +14,13 @@ import java.time.Duration;
 @Configuration
 public class RestTemplateConfig {
     @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(RestTemplateBuilder builder){
+//    @LoadBalanced
+    public RestTemplate restTemplate(RestTemplateBuilder builder,CustomInterceptor interceptor){
         return builder
                 .connectTimeout(Duration.ofSeconds(3))
                 .readTimeout(Duration.ofSeconds(3))
-                .additionalInterceptors(new RestTemplateHeaderModifierInterceptor())
-                .additionalInterceptors(new RequestResponseLoggingInterceptor())
                 .requestFactory(() -> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
+                .additionalInterceptors(interceptor)
                 .build();
     }
 }

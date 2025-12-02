@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class OrderService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    private static final String INVENTORY_URL = "http://inventory-service/api/inventory/";
+    private static final String INVENTORY_URL = "http://localhost:9001/api/inventory/";
     private static final String SERVICE_NAME = "inventory-service";
 
     public OrderService(OrderRepository orderRepository, RestTemplate restTemplate, ObjectMapper objectMapper) {
@@ -33,30 +35,40 @@ public class OrderService {
         this.objectMapper = objectMapper;
     }
 
-    @CircuitBreaker(name = SERVICE_NAME, fallbackMethod = "inventoryFallback")
-    @Retry(name = SERVICE_NAME)
+//    @CircuitBreaker(name = SERVICE_NAME, fallbackMethod = "inventoryFallback")
+//    @Retry(name = SERVICE_NAME)
     public OrderEntity placeOrder(OrderRequestDto dto) {
 
         log.info("Inside placeOrder() of OrderService............");
 
+//        http://localhost:9001/api/inventory/PROD-001
         // 1. Construct the url
         String url = INVENTORY_URL + dto.getProductId();
-        // 2.Call Inventory service (synchronous call)
+//        System.out.println(url);
+//        ResponseEntity<Boolean> forEntity = restTemplate.getForEntity(url, Boolean.class);
+//        System.out.println(forEntity.getStatusCode());
+
+//         2.Call Inventory service (synchronous call)
         try {
-            Boolean isInStock = restTemplate.getForObject(url, Boolean.class);
+            Boolean isInStock = restTemplate.exchange(url, HttpMethod.GET,null, Boolean.class).getBody();
+            System.out.println(isInStock);
         // 3. create Order Entity
             OrderEntity order = new OrderEntity();
-            order.setProductId(dto.getProductId());
-            order.setQuantity(dto.getQuantity());
-            order.setOrderDate(LocalDateTime.now());
-            order.setStatus("CREATED");
-            order.setPrice(100);
         // 4. Decide status based on inventory response
             if (Boolean.TRUE.equals(isInStock)) {
+                order.setProductId(dto.getProductId());
+                order.setQuantity(dto.getQuantity());
+                order.setOrderDate(LocalDateTime.now());
+                order.setPrice(100);
                 order.setStatus("CONFIRMED");
             } else {
+                order.setProductId(dto.getProductId());
+                order.setQuantity(dto.getQuantity());
+                order.setOrderDate(LocalDateTime.now());
+                order.setPrice(100);
                 order.setStatus("OUT_OF_STOCK");
             }
+            System.out.println(order);
             return orderRepository.save(order);
         } catch (HttpClientErrorException ex) {
             try {
@@ -77,7 +89,7 @@ public class OrderService {
         if (t instanceof ProductNotFoundException) {
             throw (ProductNotFoundException) t;
         }
-        log.error("----FALLBACK TRIGGERED !! Reason: {}", t.getMessage() + "----");
+        log.error("----FALLBACK TRIGGERED Reason: {}", t.getMessage() + "----");
         OrderEntity order = new OrderEntity();
         order.setProductId(dto.getProductId());
         order.setQuantity(dto.getQuantity());
@@ -88,7 +100,6 @@ public class OrderService {
         order.setStatus("PENDING_VERIFICATION");
 
         return orderRepository.save(order);
-
     }
 }
 
